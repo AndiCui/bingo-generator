@@ -58,7 +58,12 @@ export default {
             return x - Math.floor(x);
         },
         readWordList: async function () {
-            const response = await fetch("/word-lists/BingoListApple2023Sept.txt");
+            let url = "/word-lists/BingoListApple2023Sept.txt";
+            // If building for github pages (ENV gh_pages), prepend the repo name
+            if (process.env.GH_PAGES) {
+                url = `/bingo-generator/${url}`;
+            }
+            const response = await fetch(url);
             const text = await response.text();
             return text.split("\n");
         },

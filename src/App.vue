@@ -4,7 +4,7 @@
     <main>
         <h1><span class="title-name" contenteditable>_______'s</span> Bingo Card</h1>
         <h2 v-if="id">Random Bingo Card #{{ id.toString().padStart(6, '0') }}</h2>
-        <BingoSheet v-if="selectedWords" :wordList="selectedWords" />
+        <BingoSheet v-if="selectedWords" :wordList="selectedWords" :size="size"/>
     </main>
     <nav>
         <!-- <button @click="edit()">Edit</button> -->
@@ -27,15 +27,19 @@ export default {
         return {
             id: null,
             wordList: null,
-            selectedWords: null
+            selectedWords: null,
+            size: 5,
         };
     },
     watch: {
         id: function () {
             // Make the seed id into get parameter
             window.history.replaceState({}, "", `?id=${this.id}`);
-            this.selectedWords = this.generateSelectedWords();
-        }
+            this.generateSelectedWords();
+        },
+        size: function () {
+            this.generateSelectedWords();
+        },
     },
     created: async function () {
         this.wordList = await this.readWordList();
@@ -70,19 +74,19 @@ export default {
         },
         generateSelectedWords: function () {
             if (!this.wordList) {
-                return null;
+                this.selectedWords = null;
             }
             if (!this.id) {
-                return null;
+                this.selectedWords = null;
             }
             const wordList = [...this.wordList];
             const selectedWords = [];
-            for (let i = 0; i < 25; i++) {
+            for (let i = 0; i < (this.size * this.size); i++) {
                 const seed = this.id + i;
                 const word = this.popAtRandom(wordList, seed);
                 selectedWords.push(word);
             }
-            return selectedWords;
+            this.selectedWords = selectedWords;
         },
     }
 }
@@ -98,10 +102,10 @@ export default {
 
 @media print {
     @page {
-        /* Prints on A4 with 1.5in margin */
+        /* Prints on A4 with 1in margin */
         width: 210mm;
         height: 297mm;
-        margin: 1.5in;
+        padding: 1in;
 
         display: flex;
         align-items: center;
@@ -129,8 +133,11 @@ h4,
 h5,
 h6 {
     font-family: 'Bitter Pro', 'IBM Plex Serif', Georgia, serif;
-    font-weight: 900;
     margin: 0;
+}
+
+h1 {
+    font-weight: 900;
 }
 
 main {

@@ -1,8 +1,10 @@
 <template>
-    <div class="sheet" v-if="squares" :class="{ 'bingo': this.bingo }">
+    <div class="sheet" id="sheet" v-if="squares" :class="{ 'bingo': this.bingo }"
+        :style="{ '--grid-template': cssGridTemplateColumns }">
         <div class="square" v-for="sqr of squares" :key="sqr.id"
             :class="{ 'free': sqr.isFreeSquare, 'checked': sqr.checked, 'winning-square': this.bingo && this.bingo.includes(sqr.id) }"
-            @click="toggleSquare(sqr.id)">{{ !sqr.isFreeSquare ? sqr.text : "" }}</div>
+            @click="toggleSquare(sqr.id)">{{ !sqr.isFreeSquare ? sqr.text : "" }}
+        </div>
     </div>
 </template>
 <style scoped>
@@ -16,9 +18,18 @@
 
 .sheet {
     display: grid;
-    grid-template-columns: repeat(5, 96pt);
+    grid-template-columns: var(--grid-template);
     /* Load this from size variable */
     margin: auto auto;
+
+    font-size: 12pt;
+}
+
+@media screen and (max-width: 768px) {
+    .sheet {
+        font-size: 9pt;
+        line-height: 1;
+    }
 }
 
 .sheet.bingo {}
@@ -34,18 +45,29 @@
     border: 1pt solid black;
     box-sizing: border-box;
 
-    width: 96pt;
     aspect-ratio: 1;
+
+    overflow: hidden;
+    /* text-overflow: clip; */;
+}
+
+@media screen and (max-width: 768px) {
+    .square {
+        padding: 4pt;
+
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+    }
 }
 
 .square.free {
-    background: url(@/assets/icons/free-square.svg) no-repeat center center / 64pt;
+    background: url(@/assets/icons/free-square.svg) no-repeat center center / 66.7%;
 }
 
 .square.checked:not(.free) {
     /* overlay a cross */
-    background: url(@/assets/icons/check.svg) no-repeat center center;
-    background-size: 64pt;
+    background: url(@/assets/icons/check.svg) no-repeat center center / 66.7%;
 }
 
 .square.checked.winning-square {
@@ -55,7 +77,7 @@
 }
 
 .square.winning-square.free {
-    background: url(@/assets/icons/free-square-white.svg) no-repeat center center / 64pt;
+    background: url(@/assets/icons/free-square-white.svg) no-repeat center center / 66.7%;
     background-color: black;
     color: white;
 }
@@ -124,6 +146,12 @@ export default {
             winningSquares = [...new Set(winningSquares)]
 
             return winningSquares.length > 0 ? winningSquares : null
+        },
+        cssGridTemplateColumns() {
+            // Get viewport width
+            const width = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+            const squareSize = width > 768 ? '96pt' : '54pt';
+            return `repeat(${this.size}, ${squareSize})`
         }
     },
     watch: {

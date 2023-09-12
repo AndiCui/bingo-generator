@@ -4,12 +4,13 @@
     <main>
         <h1><span class="title-name" contenteditable>_______'s</span> Bingo Card</h1>
         <h2 v-if="id">Random Bingo Card #{{ id.toString().padStart(6, '0') }}</h2>
-        <BingoSheet v-if="selectedWords" :wordList="selectedWords" :size="size"/>
+        <BingoSheet :wordList="selectedWords" :size="size" />
     </main>
     <nav>
         <!-- <button @click="edit()">Edit</button> -->
-        <button @click="generate()" :disabled="!wordList">Generate {{ id ? "New" : "" }} Card</button>
-        <button @click="print()">Print</button>
+        <button @click="generate()" :disabled="!wordList" v-if="!id">Generate Card</button>
+        <button @click="generate(true)" :disabled="!wordList" v-else>Generate New Card</button>
+        <button @click="print()" :disabled="!selectedWords">Print</button>
     </nav>
 </template>
 
@@ -53,7 +54,11 @@ export default {
         print: function () {
             window.print();
         },
-        generate: function () {
+        generate: function (warn) {
+            if (warn && !confirm("If you generate a new card, your current card will be replaced.\n" +
+                "Are you sure you want to generate a new card?")) {
+                return;
+            }
             this.id = Math.floor(Math.random() * 1_000_000);
         },
         pseudoRandom: function (seed) {
@@ -105,11 +110,13 @@ export default {
         /* Prints on A4 with 1in margin */
         width: 210mm;
         height: 297mm;
-        padding: 1in;
+        margin: 1in;
 
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
+
         overflow: hidden;
     }
 
@@ -123,7 +130,6 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /* min-height: 100vh; */
 }
 
 h1,
@@ -139,9 +145,18 @@ h6 {
 h1 {
     font-weight: 900;
 }
+</style>
+<style scoped>
+h1 {
+    margin-bottom: 4pt;
+}
+
+h2 {
+    margin-bottom: 12pt;
+}
 
 main {
-    margin-bottom: 12pt;
+    margin-bottom: 24pt;
 }
 
 nav {

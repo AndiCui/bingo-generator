@@ -1,6 +1,6 @@
 <template>
     <div class="sheet" id="sheet" v-if="squares" :class="{ 'bingo': this.bingo }"
-        :style="{ '--grid-template': cssGridTemplateColumns }">
+        :style="{ '--grid-template': cssGridTemplateColumns, '--grid-template-print': cssGridTemplateColumnsPrint }">
         <div class="square" v-for="sqr of squares" :key="sqr.id"
             :class="{ 'free': sqr.isFreeSquare, 'checked': sqr.checked, 'winning-square': this.bingo && this.bingo.includes(sqr.id) }"
             @click="toggleSquare(sqr.id)">{{ !sqr.isFreeSquare ? sqr.text : "" }}
@@ -8,14 +8,6 @@
     </div>
 </template>
 <style scoped>
-@media print {
-    .square {
-        -webkit-print-color-adjust: exact;
-        color-adjust: exact;
-        print-color-adjust: exact;
-    }
-}
-
 .sheet {
     display: grid;
     grid-template-columns: var(--grid-template);
@@ -23,6 +15,13 @@
     margin: auto auto;
 
     font-size: 12pt;
+}
+
+
+@media print {
+    .sheet {
+        grid-template-columns: var(--grid-template-print);
+    }
 }
 
 @media screen and (max-width: 768px) {
@@ -48,7 +47,8 @@
     aspect-ratio: 1;
 
     overflow: hidden;
-    /* text-overflow: clip; */;
+    /* text-overflow: clip; */
+    ;
 }
 
 @media screen and (max-width: 768px) {
@@ -58,6 +58,15 @@
         word-wrap: break-word;
         overflow-wrap: break-word;
         hyphens: auto;
+    }
+}
+
+
+@media print {
+    .square {
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+        print-color-adjust: exact;
     }
 }
 
@@ -150,8 +159,11 @@ export default {
         cssGridTemplateColumns() {
             // Get viewport width
             const width = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-            const squareSize = width > 768 ? '96pt' : '54pt';
+            const squareSize = (width > 768) ? '96pt' : '54pt';
             return `repeat(${this.size}, ${squareSize})`
+        },
+        cssGridTemplateColumnsPrint() {
+            return `repeat(${this.size}, 96pt)`
         }
     },
     watch: {

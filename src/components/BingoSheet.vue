@@ -15,6 +15,8 @@
     margin: auto auto;
 
     font-size: 12pt;
+
+    border: 1pt solid black;
 }
 
 

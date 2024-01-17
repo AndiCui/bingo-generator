@@ -67,7 +67,7 @@ export default {
             return x - Math.floor(x);
         },
         readWordList: async function () {
-            let url = "./word-lists/BingoListApple2023Sept.txt";
+            let url = "./word-lists/BingoListGalaxyUnpacked2024.txt";
             const response = await fetch(url);
             const text = await response.text();
             return text.split("\n");

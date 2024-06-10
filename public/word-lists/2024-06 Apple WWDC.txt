@@ -39,7 +39,7 @@ Easy to use
 Ecosystem
 Elegant
 Fast
-The best/fastest/<superlative> ever
+The best / fastest / <superlative> ever
 Performance
 Efficiency
 Computational photography

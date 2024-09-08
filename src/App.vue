@@ -67,7 +67,7 @@ export default {
             return x - Math.floor(x);
         },
         readWordList: async function () {
-            let url = "./word-lists/2024-06 Apple WWDC.txt";
+            let url = "./word-lists/2024-09 Apple iPhone Event.txt";
             const response = await fetch(url);
             const text = await response.text();
             return text.split("\n");
